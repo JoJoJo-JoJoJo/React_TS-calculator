@@ -38,9 +38,11 @@ const calculate = ({
       ans = prevNum - currNum;
       break;
     case "x":
+    case "*":
       ans = prevNum * currNum;
       break;
     case "÷":
+    case "/":
       ans = prevNum / currNum;
       break;
   }
@@ -53,10 +55,7 @@ const calculate = ({
   return minusToPos.toString().length > 7 ? ans.toFixed(7) : ans.toString();
 };
 
-function useReducerFn<T extends State, K extends Action>(
-  state: T,
-  action: K
-): State {
+function useReducerFn(state: State, action: Action): State {
   const { prevOperand, operator, currOperand, bool } = state;
   const { overwrite, negative } = bool;
 
@@ -66,6 +65,7 @@ function useReducerFn<T extends State, K extends Action>(
 
   switch (type) {
     case ActionType.ADD_NUM:
+      if (!params.char) return state;
       if (currOperand === "0" && params.char === ".")
         return {
           ...state,
@@ -95,7 +95,8 @@ function useReducerFn<T extends State, K extends Action>(
       };
     case ActionType.CHOOSE_OP:
       // Edge case: Both operands contain nothing, so nothing to operate on.
-      if (currOperand === "0" && prevOperand === "") return state;
+      if ((currOperand === "0" && prevOperand === "") || !params.op)
+        return state;
       // Edge case: Negative operator just input, now changing the operator before that.
       if (currOperand === "" && prevOperand !== "" && negative.second) {
         return {
@@ -135,12 +136,8 @@ function useReducerFn<T extends State, K extends Action>(
       };
     case ActionType.SUBTRACT:
       // Edge case: Both operands contain nothing, so nothing to operate on.
-      if (currOperand === "0" && prevOperand === "") {
-        return {
-          ...state,
-          
-        }
-      };
+      if ((currOperand === "0" && prevOperand === "") || !params.op)
+        return state;
       // Edge case: Operator just input, now making second number negative.
       if (currOperand === "" && prevOperand !== "") {
         return {
