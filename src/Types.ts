@@ -32,5 +32,7 @@ type Reducer = {
   initValue: object;
 };
 
-export type { State, Action, Reducer };
+type DispatchFn = React.Dispatch<Action>;
+
+export type { State, Action, Reducer, DispatchFn };
 export { ActionType };
